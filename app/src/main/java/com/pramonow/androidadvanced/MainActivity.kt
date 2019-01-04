@@ -2,6 +2,7 @@ package com.pramonow.androidadvanced
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.LinearLayout
 
 class MainActivity : AppCompatActivity() {
 
@@ -9,6 +10,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
+        var abcd:LinearLayout
         //Map
         //FCM
         //Nearby

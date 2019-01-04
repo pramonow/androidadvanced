@@ -29,9 +29,6 @@ class SpeechToTextActivity : AppCompatActivity() {
         txtSpeechInput = findViewById(R.id.txtSpeechInput)
         btnSpeak = findViewById(R.id.btnSpeak)
 
-        // hide the action bar
-        //actionBar!!.hide()
-
         btnSpeak!!.setOnClickListener { promptSpeechInput() }
 
     }
