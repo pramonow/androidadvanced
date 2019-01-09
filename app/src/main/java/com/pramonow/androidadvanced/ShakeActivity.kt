@@ -1,26 +1,24 @@
-package com.pramonow.androidadvanced
+package pramonow.com.shakemeter
 
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
-import android.hardware.SensorListener
-import android.support.v7.app.AppCompatActivity
-import android.R.attr.y
-import android.R.attr.x
-import android.widget.Toast
 import android.hardware.SensorManager
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.widget.TextView
+import com.pramonow.androidadvanced.R
 
 
-class ShakeActivity : AppCompatActivity(),SensorEventListener{
+class ShakeActivity : AppCompatActivity(), SensorEventListener {
 
     lateinit var sensorManager: SensorManager
-    lateinit var accSensor:Sensor
-    lateinit var magnetSensor:Sensor
+    lateinit var accSensor: Sensor
+    lateinit var magnetSensor: Sensor
 
     /** Minimum movement force to consider.  */
-    private val MIN_FORCE = 40
+    private val MIN_FORCE = 45
 
     /**
      * Minimum times in a shake gesture that the direction of movement needs to
@@ -43,17 +41,22 @@ class ShakeActivity : AppCompatActivity(),SensorEventListener{
     /** How many movements are considered so far.  */
     private var mDirectionChangeCount = 0
 
-    /** The last x position.  */
     private var lastX = 0f
-
-    /** The last y position.  */
     private var lastY = 0f
-
-    /** The last z position.  */
     private var lastZ = 0f
+
+    private lateinit var countShake:TextView
+    private lateinit var powerMeter:TextView
+
+    private var topPower = 0
+    private var count = 0
+
+    private var lastUpdate = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        setContentView(R.layout.activity_shake)
 
         sensorManager =  getSystemService(SENSOR_SERVICE) as SensorManager
         accSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
@@ -61,6 +64,9 @@ class ShakeActivity : AppCompatActivity(),SensorEventListener{
 
         sensorManager.registerListener(this, accSensor, SensorManager.SENSOR_DELAY_NORMAL)
         sensorManager.registerListener(this, magnetSensor, SensorManager.SENSOR_DELAY_NORMAL)
+
+        countShake = findViewById(R.id.amount_shake)
+        powerMeter = findViewById(R.id.power)
     }
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
@@ -68,67 +74,57 @@ class ShakeActivity : AppCompatActivity(),SensorEventListener{
     }
 
     override fun onSensorChanged(se: SensorEvent) {
-        // get sensor data
-        val x = se.values[SensorManager.DATA_X]
-        val y = se.values[SensorManager.DATA_Y]
-        val z = se.values[SensorManager.DATA_Z]
 
-        // calculate movement
-        val totalMovement = Math.abs(x + y + z - lastX - lastY - lastZ)
+        val curTime = System.currentTimeMillis()
 
-        //Log.d("baniman","movement $totalMovement")
+        if ((curTime - lastUpdate) > 100) {
+            val diffTime = curTime - lastUpdate
+            lastUpdate = curTime
+            // get sensor data
+            val x = se.values[0]
+            val y = se.values[1]
+            val z = se.values[2]
 
-        if (totalMovement > MIN_FORCE) {
+            val gX = x / SensorManager.GRAVITY_EARTH
+            val gY = y / SensorManager.GRAVITY_EARTH
+            val gZ = z / SensorManager.GRAVITY_EARTH
 
-            // get time
-            val now = System.currentTimeMillis()
+            var gravity = FloatArray(3)
+            var linear_acceleration = FloatArray(3)
+            val alpha = 0.8f
 
-            // store first movement time
-            if (mFirstDirectionChangeTime == 0L) {
-                mFirstDirectionChangeTime = now
-                mLastDirectionChangeTime = now
-            }
+            gravity[0] = alpha * gravity[0] + (1 - alpha) * se.values[0]
+            gravity[1] = alpha * gravity[1] + (1 - alpha) * se.values[1]
+            gravity[2] = alpha * gravity[2] + (1 - alpha) * se.values[2]
 
-            // check if the last movement was not long ago
-            val lastChangeWasAgo = now - mLastDirectionChangeTime
-            if (lastChangeWasAgo < MAX_PAUSE_BETHWEEN_DIRECTION_CHANGE) {
+            linear_acceleration[0] = se.values[0] - gravity[0];
+            linear_acceleration[1] = se.values[1] - gravity[1];
+            linear_acceleration[2] = se.values[2] - gravity[2];
 
-                // store movement data
-                mLastDirectionChangeTime = now
-                mDirectionChangeCount++
+            // calculate movement
+            //val gForce = sqrt(gX * gX + gY * gY + gZ * gZ)
+            //Log.d("baniman","Current x " + x + " y " + y + " z " + z )
+            //Log.d("baniman","last x " + linear_acceleration[0] + " y " + linear_acceleration[1] + " z " + linear_acceleration[2] )
+            //Log.d("baniman", "total " + gForce)
 
-                // store last sensor data
-                lastX = x
-                lastY = y
-                lastZ = z
+            val speed = Math.abs(linear_acceleration[0] + linear_acceleration[1] + linear_acceleration[2] - lastX - lastY - lastZ)
+            Log.d("baniman", "total " + speed)
 
-                // check how many movements are so far
-                if (mDirectionChangeCount >= MIN_DIRECTION_CHANGE) {
+            if (speed > MIN_FORCE) {
 
-                    // check total duration
-                    val totalDuration = now - mFirstDirectionChangeTime
-                    if (totalDuration >= MIN_TOTAL_DURATION_OF_SHAKE) {
-                        Log.d("baniman","shaking")
-                        resetShakeParameters()
-                    }
+                count++;
+                countShake.setText(count.toString())
+
+                if (topPower < speed) {
+                    topPower = speed.toInt()
+                    powerMeter.setText(topPower.toString())
                 }
 
-            } else {
-                resetShakeParameters()
+                // store last sensor data
+                lastX = linear_acceleration[0]
+                lastY = linear_acceleration[1]
+                lastZ = linear_acceleration[2]
             }
         }
     }
-
-    /**
-     * Resets the shake parameters to their default values.
-     */
-    private fun resetShakeParameters() {
-        mFirstDirectionChangeTime = 0
-        mDirectionChangeCount = 0
-        mLastDirectionChangeTime = 0
-        lastX = 0f
-        lastY = 0f
-        lastZ = 0f
-    }
-
 }
