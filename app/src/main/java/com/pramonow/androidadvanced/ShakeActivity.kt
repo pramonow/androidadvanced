@@ -1,4 +1,4 @@
-package pramonow.com.shakemeter
+package com.pramonow.androidadvanced
 
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -19,27 +19,6 @@ class ShakeActivity : AppCompatActivity(), SensorEventListener {
 
     /** Minimum movement force to consider.  */
     private val MIN_FORCE = 45
-
-    /**
-     * Minimum times in a shake gesture that the direction of movement needs to
-     * change.
-     */
-    private val MIN_DIRECTION_CHANGE = 20
-
-    /** Maximum pause between movements.  */
-    private val MAX_PAUSE_BETHWEEN_DIRECTION_CHANGE = 1000
-
-    /** Minimum allowed time for shake gesture.  */
-    private val MIN_TOTAL_DURATION_OF_SHAKE = 1.5 // 8 seconds
-
-    /** Time when the gesture started.  */
-    private var mFirstDirectionChangeTime: Long = 0
-
-    /** Time when the last movement started.  */
-    private var mLastDirectionChangeTime: Long = 0
-
-    /** How many movements are considered so far.  */
-    private var mDirectionChangeCount = 0
 
     private var lastX = 0f
     private var lastY = 0f
@@ -80,14 +59,6 @@ class ShakeActivity : AppCompatActivity(), SensorEventListener {
         if ((curTime - lastUpdate) > 100) {
             val diffTime = curTime - lastUpdate
             lastUpdate = curTime
-            // get sensor data
-            val x = se.values[0]
-            val y = se.values[1]
-            val z = se.values[2]
-
-            val gX = x / SensorManager.GRAVITY_EARTH
-            val gY = y / SensorManager.GRAVITY_EARTH
-            val gZ = z / SensorManager.GRAVITY_EARTH
 
             var gravity = FloatArray(3)
             var linear_acceleration = FloatArray(3)
@@ -97,18 +68,11 @@ class ShakeActivity : AppCompatActivity(), SensorEventListener {
             gravity[1] = alpha * gravity[1] + (1 - alpha) * se.values[1]
             gravity[2] = alpha * gravity[2] + (1 - alpha) * se.values[2]
 
-            linear_acceleration[0] = se.values[0] - gravity[0];
-            linear_acceleration[1] = se.values[1] - gravity[1];
-            linear_acceleration[2] = se.values[2] - gravity[2];
-
-            // calculate movement
-            //val gForce = sqrt(gX * gX + gY * gY + gZ * gZ)
-            //Log.d("baniman","Current x " + x + " y " + y + " z " + z )
-            //Log.d("baniman","last x " + linear_acceleration[0] + " y " + linear_acceleration[1] + " z " + linear_acceleration[2] )
-            //Log.d("baniman", "total " + gForce)
+            linear_acceleration[0] = se.values[0] - gravity[0]
+            linear_acceleration[1] = se.values[1] - gravity[1]
+            linear_acceleration[2] = se.values[2] - gravity[2]
 
             val speed = Math.abs(linear_acceleration[0] + linear_acceleration[1] + linear_acceleration[2] - lastX - lastY - lastZ)
-            Log.d("baniman", "total " + speed)
 
             if (speed > MIN_FORCE) {
 
