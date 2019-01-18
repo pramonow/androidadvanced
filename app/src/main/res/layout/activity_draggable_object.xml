@@ -23,15 +23,10 @@
             android:textSize="30dp"
             android:textColor="#ff14be3c" />>
 
-    <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+    <ImageButton
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:id="@+id/imageView"
-            android:src="@mipmap/ic_launcher"
-            android:layout_below="@+id/textView2"
-            android:layout_alignRight="@+id/textView2"
-            android:layout_alignEnd="@+id/textView2"
-            android:layout_alignLeft="@+id/textView2"
-            android:layout_alignStart="@+id/textView2" />
+            android:src="@mipmap/ic_launcher"/>
 
 </RelativeLayout>

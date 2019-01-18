@@ -11,20 +11,76 @@ import android.os.Bundle
 import android.app.Activity
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
+import android.view.GestureDetector
+import android.view.GestureDetector.SimpleOnGestureListener
+import android.widget.ImageButton
+
 
 class DraggableObjectActivtiy : AppCompatActivity() {
-    private lateinit var img: ImageView
+    private lateinit var img: ImageButton
     internal var msg: String? = "TAGMESSAGEOFCOURSE"
     private var layoutParams: android.widget.RelativeLayout.LayoutParams? = null
 
-    @SuppressLint("ClickableViewAccessibility")
+    private var gestureDetector: GestureDetector? = null
+
+    private inner class SingleTapConfirm : SimpleOnGestureListener() {
+
+        override fun onSingleTapUp(event: MotionEvent): Boolean {
+            return true
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_draggable_object)
         img = findViewById(R.id.imageView)
+        gestureDetector = GestureDetector(this, SingleTapConfirm())
 
+        var x = 0f
+        var y = 0f
+
+        var listener = View.OnTouchListener(function = {view, motionEvent ->
+
+
+
+            if (gestureDetector!!.onTouchEvent(motionEvent)) {
+                // single tap
+                Log.d(msg,"TAP")
+                true
+            }
+            else if(motionEvent.action == MotionEvent.ACTION_DOWN) {
+                x = motionEvent.getX()
+                y = motionEvent.getY()
+            }
+            else if(motionEvent.action == MotionEvent.ACTION_MOVE){
+
+                //Thread.sleep(300)
+                var sesitivity = 20
+
+                var x1 = motionEvent.getX()
+                var y1 = motionEvent.getY()
+
+                Log.d(msg, "MOVE " + x + " AND " + x1)
+
+                //sensitivity
+                if(Math.abs(x1+y1-x-y) > sesitivity) {
+
+                    Log.d(msg, "SENSITIVE ENOUGH")
+                    view.y = motionEvent.rawY - view.height
+                    view.x = motionEvent.rawX - view.width / 2
+                }
+
+                true
+            }
+
+            false
+        })
+
+        img.setOnTouchListener(listener)
+/*
         img.setOnLongClickListener(object : View.OnLongClickListener {
             override fun onLongClick(v: View): Boolean {
 
@@ -38,7 +94,7 @@ class DraggableObjectActivtiy : AppCompatActivity() {
 
                 v.startDrag(data, shadowBuilder, null, 0)
                 //v.visibility = View.INVISIBLE
-                Log.d(msg,"LONG CLICK")
+                img.setOnTouchListener(listener)
                 return true
             }
         })
@@ -88,7 +144,7 @@ class DraggableObjectActivtiy : AppCompatActivity() {
 
                 return true
             }
-        })
+        })*/
 
     }
 }
