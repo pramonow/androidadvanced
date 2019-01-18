@@ -21,7 +21,8 @@
         <activity android:name=".SpeechToTextActivity">
 
         </activity>
-        <activity android:name=".ShakeActivity">            <intent-filter>
+        <activity android:name=".DraggableObjectActivtiy">
+            <intent-filter>
             <action android:name="android.intent.action.MAIN"/>
 
             <category android:name="android.intent.category.LAUNCHER"/>
