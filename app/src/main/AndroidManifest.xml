@@ -21,7 +21,7 @@
         <activity android:name=".SpeechToTextActivity">
 
         </activity>
-        <activity android:name=".CustomViewActivity">
+        <activity android:name=".JniActivity">
             <intent-filter>
             <action android:name="android.intent.action.MAIN"/>
 
