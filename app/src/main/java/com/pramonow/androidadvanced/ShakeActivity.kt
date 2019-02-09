@@ -57,13 +57,14 @@ class ShakeActivity : AppCompatActivity(), SensorEventListener {
         val curTime = System.currentTimeMillis()
 
         if ((curTime - lastUpdate) > 100) {
-            val diffTime = curTime - lastUpdate
+
             lastUpdate = curTime
 
             var gravity = FloatArray(3)
             var linear_acceleration = FloatArray(3)
             val alpha = 0.8f
 
+            //Blocks for calculating the difference in sensor data
             gravity[0] = alpha * gravity[0] + (1 - alpha) * se.values[0]
             gravity[1] = alpha * gravity[1] + (1 - alpha) * se.values[1]
             gravity[2] = alpha * gravity[2] + (1 - alpha) * se.values[2]
@@ -72,15 +73,15 @@ class ShakeActivity : AppCompatActivity(), SensorEventListener {
             linear_acceleration[1] = se.values[1] - gravity[1]
             linear_acceleration[2] = se.values[2] - gravity[2]
 
-            val speed = Math.abs(linear_acceleration[0] + linear_acceleration[1] + linear_acceleration[2] - lastX - lastY - lastZ)
+            val sensorDifference = Math.abs(linear_acceleration[0] + linear_acceleration[1] + linear_acceleration[2] - lastX - lastY - lastZ)
 
-            if (speed > MIN_FORCE) {
+            if (sensorDifference > MIN_FORCE) {
 
                 count++;
                 countShake.setText(count.toString())
 
-                if (topPower < speed) {
-                    topPower = speed.toInt()
+                if (topPower < sensorDifference) {
+                    topPower = sensorDifference.toInt()
                     powerMeter.setText(topPower.toString())
                 }
 

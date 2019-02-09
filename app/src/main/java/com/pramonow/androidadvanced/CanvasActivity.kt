@@ -65,7 +65,7 @@ class CanvasActivity : AppCompatActivity() {
             } else {
                 mPaint.color = mColorAccent
                 mCanvas!!.drawCircle(halfWidth.toFloat(), halfHeight.toFloat(), (halfWidth / 3).toFloat(), mPaint)
-                val text = "DOne"
+                val text = "Done"
                 mPaintText.getTextBounds(text, 0, text.length, mBounds)
                 val x = halfWidth - mBounds.centerX()
                 val y = halfHeight - mBounds.centerY()

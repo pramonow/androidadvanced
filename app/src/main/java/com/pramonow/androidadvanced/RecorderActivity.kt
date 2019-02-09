@@ -26,7 +26,7 @@ class RecorderActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recorder)
 
-
+        //output path
         output = Environment.getExternalStorageDirectory().absolutePath + "/recording.mp3"
 
         button_start_recording.setOnClickListener {
@@ -59,6 +59,7 @@ class RecorderActivity : AppCompatActivity() {
             mediaRecorder?.prepare()
             mediaRecorder?.start()
             state = true
+
             Toast.makeText(this, "Recording started!", Toast.LENGTH_SHORT).show()
         } catch (e: IllegalStateException) {
             e.printStackTrace()

@@ -6,6 +6,7 @@ import android.widget.Toast
 
 class JniActivity:AppCompatActivity(){
 
+    //Our Jni method
     external fun getKey(key:Int):Int
 
     companion object {
@@ -16,7 +17,7 @@ class JniActivity:AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_jni)
 
         Toast.makeText(this,getKey(55).toString(),Toast.LENGTH_SHORT).show()
     }
