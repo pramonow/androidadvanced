@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 
 class MainActivity : AppCompatActivity() {
 
+    lateinit var animationButton: Button
     lateinit var canvasButton: Button
     lateinit var customButton: Button
     lateinit var jniButton: Button
@@ -20,6 +21,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        animationButton = findViewById(R.id.animation_button)
         canvasButton = findViewById(R.id.canvas_button)
         customButton = findViewById(R.id.custom_button)
         jniButton = findViewById(R.id.jni_button)
@@ -28,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         shakeButton = findViewById(R.id.shake_button)
         speechTextButton = findViewById(R.id.speech_text_button)
 
+        animationButton.setOnClickListener { startActivity(Intent(this,AnimationActivity::class.java)) }
         canvasButton.setOnClickListener { startActivity(Intent(this,CanvasActivity::class.java)) }
         customButton.setOnClickListener { startActivity(Intent(this,CustomViewActivity::class.java)) }
         jniButton.setOnClickListener { startActivity(Intent(this,JniActivity::class.java)) }
